@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A member of the society",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "member"] },
+        "totalSavings": { "type": "number", "description": "Total savings balance" },
+        "outstandingLoan": { "type": "number", "description": "Current outstanding loan amount" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "totalSavings", "outstandingLoan"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A financial transaction (deposit, loan repayment, etc.)",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "ID of the user this transaction belongs to" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["deposit", "loan_repayment", "loan_disbursement", "other"] },
+        "date": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "date", "createdAt"]
+    },
+    "Loan": {
+      "title": "Loan",
+      "description": "A loan taken by a member",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "principal": { "type": "number" },
+        "interestRate": { "type": "number" },
+        "remainingBalance": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "paid"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "principal", "interestRate", "remainingBalance", "status", "createdAt"]
+    },
+    "SocietyStats": {
+      "title": "SocietyStats",
+      "description": "Global stats and notices for the society",
+      "type": "object",
+      "properties": {
+        "totalBalance": { "type": "number" },
+        "notice": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["totalBalance"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Collection of society members"
+    },
+    "/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Collection of all transactions"
+    },
+    "/loans/{loanId}": {
+      "schema": { "$ref": "#/entities/Loan" },
+      "description": "Collection of all loans"
+    },
+    "/society_stats/{statId}": {
+      "schema": { "$ref": "#/entities/SocietyStats" },
+      "description": "Global society stats (usually just one document 'main')"
+    }
+  }
+}
